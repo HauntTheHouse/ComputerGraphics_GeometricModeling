@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(lab1)
 
+find_package(SFML COMPONENTS system window graphics)
+find_package(TGUI)
+
 set(SRC_DIR "src/")
 set(FONTS_DIR "fonts/")
 

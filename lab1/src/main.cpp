@@ -1,70 +1,28 @@
 #include <SFML/Graphics.hpp>
-#include <TGUI/TGUI.hpp>
 
-#include <iostream>
-
-const auto WINDOW_WIDTH = 800;
-const auto WINDOW_HEIGHT = 600;
-
-const auto SCENE_WIDTH = 600;
-const auto SCENE_HEIGHT = 600;
-
-const auto GUI_WIDTH = 200;
-const auto GUI_HEIGHT = 600;
-
-void drawAxis(sf::RenderWindow& window, float unit, sf::Color color)
-{
-    sf::VertexArray lines{sf::PrimitiveType::Lines};
-    sf::Vector2f center(SCENE_WIDTH/2.0f + GUI_WIDTH, SCENE_HEIGHT/2.0f);
-
-    lines.append(sf::Vertex(sf::Vector2f(center.x, 0.0f), color));
-    lines.append(sf::Vertex(sf::Vector2f(center.x, SCENE_HEIGHT), color));
-    for (float i = unit; i < SCENE_WIDTH/2.0f; i+=unit)
-    {
-        lines.append(sf::Vertex(sf::Vector2f(center.x + i, 0.0f), sf::Color(180, 180, 180, 255)));
-        lines.append(sf::Vertex(sf::Vector2f(center.x + i, WINDOW_HEIGHT), sf::Color(180, 180, 180, 255)));
-    }
-    for (float i = unit; i < SCENE_WIDTH/2.0f; i+=unit)
-    {
-        lines.append(sf::Vertex(sf::Vector2f(center.x - i, 0.0f), sf::Color(180, 180, 180, 255)));
-        lines.append(sf::Vertex(sf::Vector2f(center.x - i, WINDOW_HEIGHT), sf::Color(180, 180, 180, 255)));
-    }
-
-    lines.append(sf::Vertex(sf::Vector2f(GUI_WIDTH, center.y), color));
-    lines.append(sf::Vertex(sf::Vector2f(WINDOW_WIDTH, center.y), color));
-    for (float i = unit; i < SCENE_HEIGHT/2.0f; i+=unit)
-    {
-        lines.append(sf::Vertex(sf::Vector2f(GUI_WIDTH, center.y + i), sf::Color(180, 180, 180, 255)));
-        lines.append(sf::Vertex(sf::Vector2f(WINDOW_WIDTH, center.y + i), sf::Color(180, 180, 180, 255)));
-    }
-    for (float i = unit; i < SCENE_HEIGHT/2.0f; i+=unit)
-    {
-        lines.append(sf::Vertex(sf::Vector2f(GUI_WIDTH, center.y - i), sf::Color(180, 180, 180, 255)));
-        lines.append(sf::Vertex(sf::Vector2f(WINDOW_WIDTH, center.y - i), sf::Color(180, 180, 180, 255)));
-    }
-
-    window.draw(lines);
-}
+#include "Menu.h"
+#include "CoordinateSystem.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Lab1");
-    tgui::Gui gui{window};
+    const auto WINDOW_WIDTH = 800;
+    const auto WINDOW_HEIGHT = 600;
 
-    tgui::Slider::Ptr slider = tgui::Slider::create(10, 30);
-    slider->setPosition(10, 10);
-    slider->setSize(180, 10);
-    slider->setValue(20.0f);
-    slider->setTextSize(10);
-    slider->setChangeValueOnScroll(true);
-    gui.add(slider);
-    
-    sf::Font font{};
-    font.loadFromFile("fonts/FreeSerif.ttf");
+    const auto MENU_WIDTH = 200;
+    const auto MENU_HEIGHT = 600;
 
-    sf::Text text{"Unit: ", font, 14};
-    text.setPosition(tgui::Vector2f(45.0f, 30.0f));
-    text.setFillColor(sf::Color(0, 0, 0));
+    const auto GRID_WIDTH = WINDOW_WIDTH - MENU_WIDTH;
+    const auto GRID_HEIGHT = WINDOW_HEIGHT;
+
+    const auto GRID_CENTER = sf::Vector2f(MENU_WIDTH + GRID_WIDTH/2.0f, GRID_HEIGHT/2.0f);
+
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Lab1", sf::Style::Close);
+
+    Menu menu(window, MENU_WIDTH, MENU_HEIGHT);
+    CoordinateSystem coordinateSystem(window, GRID_CENTER, GRID_WIDTH, GRID_HEIGHT);
+
+    float unit;
+    menu.addSlider("Unit: ", &unit, 10.0f, 30.0f);
 
     while (window.isOpen())
     {
@@ -73,16 +31,13 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            gui.handleEvent(event);
+            menu.handleEvent(event);
         }
 
         window.clear(sf::Color(255, 255, 255, 255));
 
-        drawAxis(window, slider->getValue(), sf::Color());
-        text.setString("Unit: " + std::to_string(slider->getValue()));
-
-        gui.draw();
-        window.draw(text);
+        menu.draw();
+        coordinateSystem.drawGrid(unit);
 
         window.display();
     }
