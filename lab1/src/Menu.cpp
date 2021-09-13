@@ -9,7 +9,7 @@ Menu::Menu(sf::RenderWindow& aRenderWindow, unsigned int aWidth, unsigned int aH
 {
 }
 
-void Menu::addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal)
+void Menu::addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal, float aStep)
 {
     *aChangeableValue = aMinVal + (aMaxVal - aMinVal)/2.0f;
 
@@ -17,6 +17,7 @@ void Menu::addSlider(const std::string& aText, float* aChangeableValue, float aM
     slider->setPosition(mMargin, mMargin + mCurHeightPointer);
     slider->setSize(static_cast<float>(mWidth) - mMargin * 2.0f, mMargin);
     slider->setValue(*aChangeableValue);
+    slider->setStep(aStep);
     slider->setChangeValueOnScroll(true);
     mGui.add(slider);
 

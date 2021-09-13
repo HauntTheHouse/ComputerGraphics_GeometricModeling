@@ -9,7 +9,7 @@ class Menu
 public:
     Menu(sf::RenderWindow& aRenderWindow, unsigned int aWidth, unsigned int aHeight, float aMargin = 10.0f);
 
-    void addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal);
+    void addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal, float aStep);
     void handleEvent(sf::Event aEvent);
     void draw();
 
