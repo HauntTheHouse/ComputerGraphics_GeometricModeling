@@ -66,32 +66,32 @@ void CoordinateSystem::drawFigure(const float* aParameters)
     const auto color = sf::Color(255, 0, 0);
 
     const auto centroid1 = mCenterOfGrid;
-    const auto r1 = aParameters[0] * mUnit;
+    const auto radius1 = aParameters[0] * mUnit;
 
     const auto fromAngle1 = -2.0f/3.0f*PI;
     const auto toAngle1   =  2.0f/3.0f*PI;
 
-    addArc(lines, centroid1, r1, fromAngle1, toAngle1, color);
+    addArc(lines, centroid1, radius1, fromAngle1, toAngle1, color);
 
-    const auto firstPoint1 = sf::Vector2f(r1 * cosf(fromAngle1) + centroid1.x, r1 * sinf(fromAngle1) + centroid1.y);
-    const auto lastPoint1  = sf::Vector2f(r1 * cosf(toAngle1)   + centroid1.x, r1 * sinf(toAngle1)   + centroid1.y);
+    const auto firstPoint1 = sf::Vector2f(radius1 * cosf(fromAngle1) + centroid1.x, radius1 * sinf(fromAngle1) + centroid1.y);
+    const auto lastPoint1  = sf::Vector2f(radius1 * cosf(toAngle1) + centroid1.x, radius1 * sinf(toAngle1) + centroid1.y);
 
-    const auto upPoint1    = sf::Vector2f(r1 * cosf(-1.0f / 2.0f * M_PI) + centroid1.x, r1 * sinf(-1.0f / 2.0f * M_PI) + centroid1.y);
-    const auto downPoint1  = sf::Vector2f(r1 * cosf( 1.0f / 2.0f * M_PI) + centroid1.x, r1 * sinf( 1.0f / 2.0f * M_PI) + centroid1.y);
-    const auto rightPoint1 = sf::Vector2f(r1 + centroid1.x, centroid1.y);
+    const auto upPoint1    = sf::Vector2f(radius1 * cosf(-1.0f / 2.0f * M_PI) + centroid1.x, radius1 * sinf(-1.0f / 2.0f * M_PI) + centroid1.y);
+    const auto downPoint1  = sf::Vector2f(radius1 * cosf(1.0f / 2.0f * M_PI) + centroid1.x, radius1 * sinf(1.0f / 2.0f * M_PI) + centroid1.y);
+    const auto rightPoint1 = sf::Vector2f(radius1 + centroid1.x, centroid1.y);
 
 /* Create left half-circle */
 
     const auto centroid2 = mCenterOfGrid + sf::Vector2f(aParameters[1] * mUnit, 0.0f);
-    const auto r2 = aParameters[2] * mUnit;
+    const auto radius2 = aParameters[2] * mUnit;
 
     const auto fromAngle2 = 1.0f/2.0f*PI;
     const auto toAngle2   = 3.0f/2.0f*PI;
 
-    addArc(lines, centroid2, r2, fromAngle2, toAngle2, color);
+    addArc(lines, centroid2, radius2, fromAngle2, toAngle2, color);
 
-    const auto firstPoint2 = sf::Vector2f(r2 * cosf(fromAngle2) + centroid2.x, r2 * sinf(fromAngle2) + centroid2.y);
-    const auto lastPoint2  = sf::Vector2f(r2 * cosf(toAngle2)   + centroid2.x, r2 * sinf(toAngle2)   + centroid2.y);
+    const auto firstPoint2 = sf::Vector2f(radius2 * cosf(fromAngle2) + centroid2.x, radius2 * sinf(fromAngle2) + centroid2.y);
+    const auto lastPoint2  = sf::Vector2f(radius2 * cosf(toAngle2) + centroid2.x, radius2 * sinf(toAngle2) + centroid2.y);
 
 /* Bind edges of central and left half-circles */
 
@@ -101,12 +101,12 @@ void CoordinateSystem::drawFigure(const float* aParameters)
 /* Create first up-right circle */
 
     const auto centroid3 = mCenterOfGrid + sf::Vector2f(aParameters[3] * mUnit, -aParameters[3] * mUnit);
-    const auto r3 = 1.5f * mUnit;
+    const auto radius3 = 1.5f * mUnit;
 
-    addArc(lines, centroid3, r3, 0.0f, 2.0f*PI, color);
+    addArc(lines, centroid3, radius3, 0.0f, 2.0f * PI, color);
 
-    const auto leftUpPoint3    = sf::Vector2f(r3 * cosf(-3.0f / 4.0f * M_PI) + centroid3.x, r3 * sinf(-3.0f / 4.0f * M_PI) + centroid3.y);
-    const auto rightDownPoint3 = sf::Vector2f(r3 * cosf( 1.0f / 4.0f * M_PI) + centroid3.x, r3 * sinf( 1.0f / 4.0f * M_PI) + centroid3.y);
+    const auto leftUpPoint3    = sf::Vector2f(radius3 * cosf(-3.0f / 4.0f * M_PI) + centroid3.x, radius3 * sinf(-3.0f / 4.0f * M_PI) + centroid3.y);
+    const auto rightDownPoint3 = sf::Vector2f(radius3 * cosf(1.0f / 4.0f * M_PI) + centroid3.x, radius3 * sinf(1.0f / 4.0f * M_PI) + centroid3.y);
 
 /* Bind edges of central half-circle and first up-right circle */
 
@@ -116,12 +116,12 @@ void CoordinateSystem::drawFigure(const float* aParameters)
 /* Create first down-right circle */
 
     const auto centroid4 = mCenterOfGrid + sf::Vector2f(aParameters[3] * mUnit, aParameters[3] * mUnit);
-    const auto r4 = 1.5f * mUnit;
+    const auto radius4 = 1.5f * mUnit;
 
-    addArc(lines, centroid4, r4, 0.0f, 2.0f*PI, color);
+    addArc(lines, centroid4, radius4, 0.0f, 2.0f * PI, color);
 
-    const auto rightUpPoint4  = sf::Vector2f(r4 * cosf(-1.0f / 4.0f * M_PI) + centroid4.x, r4 * sinf(-1.0f / 4.0f * M_PI) + centroid4.y);
-    const auto leftDownPoint4 = sf::Vector2f(r4 * cosf( 3.0f / 4.0f * M_PI) + centroid4.x, r4 * sinf( 3.0f / 4.0f * M_PI) + centroid4.y);
+    const auto rightUpPoint4  = sf::Vector2f(radius4 * cosf(-1.0f / 4.0f * M_PI) + centroid4.x, radius4 * sinf(-1.0f / 4.0f * M_PI) + centroid4.y);
+    const auto leftDownPoint4 = sf::Vector2f(radius4 * cosf(3.0f / 4.0f * M_PI) + centroid4.x, radius4 * sinf(3.0f / 4.0f * M_PI) + centroid4.y);
 
 /* Bind edges of central half-circle and first down-right circle */
 
@@ -131,12 +131,12 @@ void CoordinateSystem::drawFigure(const float* aParameters)
 /* Create second up-right circle */
 
     const auto centroid5 = mCenterOfGrid + sf::Vector2f((aParameters[3] + aParameters[4]) * mUnit, -(aParameters[3] + aParameters[4]) * mUnit);
-    const auto r5 = 2.0f * mUnit;
+    const auto radius5 = 2.0f * mUnit;
 
-    addArc(lines, centroid5, r5, 0.0f, 2.0f*PI, color);
+    addArc(lines, centroid5, radius5, 0.0f, 2.0f * PI, color);
 
-    const auto leftUpPoint5    = sf::Vector2f(r5 * cosf(-3.0f / 4.0f * M_PI) + centroid5.x, r5 * sinf(-3.0f / 4.0f * M_PI) + centroid5.y);
-    const auto rightDownPoint5 = sf::Vector2f(r5 * cosf( 1.0f / 4.0f * M_PI) + centroid5.x, r5 * sinf( 1.0f / 4.0f * M_PI) + centroid5.y);
+    const auto leftUpPoint5    = sf::Vector2f(radius5 * cosf(-3.0f / 4.0f * M_PI) + centroid5.x, radius5 * sinf(-3.0f / 4.0f * M_PI) + centroid5.y);
+    const auto rightDownPoint5 = sf::Vector2f(radius5 * cosf(1.0f / 4.0f * M_PI) + centroid5.x, radius5 * sinf(1.0f / 4.0f * M_PI) + centroid5.y);
 
 /* Bind edges of first up-right circle and second up-right circle */
 
@@ -146,12 +146,12 @@ void CoordinateSystem::drawFigure(const float* aParameters)
 /* Create second down-right circle */
 
     const auto centroid6 = mCenterOfGrid + sf::Vector2f((aParameters[3] + aParameters[4]) * mUnit, (aParameters[3] + aParameters[4]) * mUnit);
-    const auto r6 = 2.0f * mUnit;
+    const auto radius6 = 2.0f * mUnit;
 
-    addArc(lines, centroid6, r6, 0.0f, 2.0f*PI, color);
+    addArc(lines, centroid6, radius6, 0.0f, 2.0f * PI, color);
 
-    const auto rightUpPoint6  = sf::Vector2f(r6 * cosf(-1.0f / 4.0f * M_PI) + centroid6.x, r6 * sinf(-1.0f / 4.0f * M_PI) + centroid6.y);
-    const auto leftDownPoint6 = sf::Vector2f(r6 * cosf( 3.0f / 4.0f * M_PI) + centroid6.x, r6 * sinf( 3.0f / 4.0f * M_PI) + centroid6.y);
+    const auto rightUpPoint6  = sf::Vector2f(radius6 * cosf(-1.0f / 4.0f * M_PI) + centroid6.x, radius6 * sinf(-1.0f / 4.0f * M_PI) + centroid6.y);
+    const auto leftDownPoint6 = sf::Vector2f(radius6 * cosf(3.0f / 4.0f * M_PI) + centroid6.x, radius6 * sinf(3.0f / 4.0f * M_PI) + centroid6.y);
 
 /* Bind edges of first down-right circle and second down-right circle */
 
