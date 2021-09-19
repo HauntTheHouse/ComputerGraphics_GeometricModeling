@@ -1,5 +1,6 @@
 #include "CoordinateSystem.h"
 #include <cmath>
+//#include <SFML/
 
 const float CoordinateSystem::PI = 3.14159265358979323846f;
 
@@ -13,53 +14,56 @@ CoordinateSystem::CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Ve
 {
 }
 
-void CoordinateSystem::drawGrid()
+void CoordinateSystem::drawGrid(const sf::Color& aAxisColor, const sf::Color& aGridColor, const sf::Transform& aTransform)
 {
     sf::VertexArray lines(sf::PrimitiveType::Lines);
-
-    const sf::Color grey(180, 180, 180, 255);
-    const sf::Color black(0, 0, 0, 255);
 
 /* Add vertical lines */
     for (float i = mUnit; i < mWidth/2.0f; i+=mUnit)
     {
         addLine(lines,
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x + i, 0.0f), grey),
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x + i, mHeight), grey));
+                aTransform * sf::Vector2f(mCenterOfGrid.x + i, 0.0f),
+                aTransform * sf::Vector2f(mCenterOfGrid.x + i, mHeight),
+                aGridColor);
     }
     for (float i = mUnit; i < mWidth/2.0f; i+=mUnit)
     {
         addLine(lines,
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x - i, 0.0f), grey),
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x - i, mHeight), grey));
+                aTransform * sf::Vector2f(mCenterOfGrid.x - i, 0.0f),
+                aTransform * sf::Vector2f(mCenterOfGrid.x - i, mHeight),
+                aGridColor);
     }
 
 /* Add horizontal lines */
     for (float i = mUnit; i < mHeight/2.0f; i+=mUnit)
     {
         addLine(lines,
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x - mWidth/2.0f, mCenterOfGrid.y + i), grey),
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x + mWidth/2.0f, mCenterOfGrid.y + i), grey));
+                aTransform * sf::Vector2f(mCenterOfGrid.x - mWidth / 2.0f, mCenterOfGrid.y + i),
+                aTransform * sf::Vector2f(mCenterOfGrid.x + mWidth / 2.0f, mCenterOfGrid.y + i),
+                aGridColor);
     }
     for (float i = mUnit; i < mHeight/2.0f; i+=mUnit)
     {
         addLine(lines,
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x - mWidth/2.0f, mCenterOfGrid.y - i), grey),
-                sf::Vertex(sf::Vector2f(mCenterOfGrid.x + mWidth/2.0f, mCenterOfGrid.y - i), grey));
+                aTransform * sf::Vector2f(mCenterOfGrid.x - mWidth / 2.0f, mCenterOfGrid.y - i),
+                aTransform * sf::Vector2f(mCenterOfGrid.x + mWidth / 2.0f, mCenterOfGrid.y - i),
+                aGridColor);
     }
 
 /* Add main axis */
     addLine(lines,
-            sf::Vertex(sf::Vector2f(mCenterOfGrid.x, 0.0f), black),
-            sf::Vertex(sf::Vector2f(mCenterOfGrid.x, mHeight), black));
+            aTransform * sf::Vector2f(mCenterOfGrid.x, 0.0f),
+            aTransform * sf::Vector2f(mCenterOfGrid.x, mHeight),
+            aAxisColor);
     addLine(lines,
-            sf::Vertex(sf::Vector2f(mCenterOfGrid.x - mWidth/2.0f, mCenterOfGrid.y), black),
-            sf::Vertex(sf::Vector2f(mCenterOfGrid.x + mWidth/2.0f, mCenterOfGrid.y), black));
+            aTransform * sf::Vector2f(mCenterOfGrid.x - mWidth / 2.0f, mCenterOfGrid.y),
+            aTransform * sf::Vector2f(mCenterOfGrid.x + mWidth / 2.0f, mCenterOfGrid.y),
+            aAxisColor);
 
     mRenderWindow.draw(lines);
 }
 
-void CoordinateSystem::drawFigure(const float* aParameters)
+void CoordinateSystem::drawFigure(const float* aParameters, const sf::Transform& aTransform)
 {
 /* Create central half-circle */
     sf::VertexArray lines(sf::PrimitiveType::Lines);
@@ -71,13 +75,13 @@ void CoordinateSystem::drawFigure(const float* aParameters)
     const auto fromAngle1 = -2.0f/3.0f*PI;
     const auto toAngle1   =  2.0f/3.0f*PI;
 
-    addArc(lines, centroid1, radius1, fromAngle1, toAngle1, color);
+    addArc(lines, centroid1, radius1, fromAngle1, toAngle1, color, aTransform);
 
     const auto firstPoint1 = sf::Vector2f(radius1 * cosf(fromAngle1) + centroid1.x, radius1 * sinf(fromAngle1) + centroid1.y);
     const auto lastPoint1  = sf::Vector2f(radius1 * cosf(toAngle1) + centroid1.x, radius1 * sinf(toAngle1) + centroid1.y);
 
-    const auto upPoint1    = sf::Vector2f(radius1 * cosf(-1.0f / 2.0f * M_PI) + centroid1.x, radius1 * sinf(-1.0f / 2.0f * M_PI) + centroid1.y);
-    const auto downPoint1  = sf::Vector2f(radius1 * cosf(1.0f / 2.0f * M_PI) + centroid1.x, radius1 * sinf(1.0f / 2.0f * M_PI) + centroid1.y);
+    const auto upPoint1    = sf::Vector2f(radius1 * cosf(-1.0f / 2.0f * PI) + centroid1.x, radius1 * sinf(-1.0f / 2.0f * PI) + centroid1.y);
+    const auto downPoint1  = sf::Vector2f(radius1 * cosf(1.0f / 2.0f * PI) + centroid1.x, radius1 * sinf(1.0f / 2.0f * PI) + centroid1.y);
     const auto rightPoint1 = sf::Vector2f(radius1 + centroid1.x, centroid1.y);
 
 /* Create left half-circle */
@@ -88,95 +92,94 @@ void CoordinateSystem::drawFigure(const float* aParameters)
     const auto fromAngle2 = 1.0f/2.0f*PI;
     const auto toAngle2   = 3.0f/2.0f*PI;
 
-    addArc(lines, centroid2, radius2, fromAngle2, toAngle2, color);
+    addArc(lines, centroid2, radius2, fromAngle2, toAngle2, color, aTransform);
 
     const auto firstPoint2 = sf::Vector2f(radius2 * cosf(fromAngle2) + centroid2.x, radius2 * sinf(fromAngle2) + centroid2.y);
     const auto lastPoint2  = sf::Vector2f(radius2 * cosf(toAngle2) + centroid2.x, radius2 * sinf(toAngle2) + centroid2.y);
 
 /* Bind edges of central and left half-circles */
 
-    addLine(lines, sf::Vertex(firstPoint1, color), sf::Vertex(lastPoint2, color));
-    addLine(lines, sf::Vertex(firstPoint2, color), sf::Vertex(lastPoint1, color));
+    addLine(lines, aTransform * firstPoint1, aTransform * lastPoint2, color);
+    addLine(lines, aTransform * firstPoint2, aTransform * lastPoint1, color);
 
 /* Create first up-right circle */
 
     const auto centroid3 = mCenterOfGrid + sf::Vector2f(aParameters[3] * mUnit, -aParameters[3] * mUnit);
     const auto radius3 = 1.5f * mUnit;
 
-    addArc(lines, centroid3, radius3, 0.0f, 2.0f * PI, color);
+    addArc(lines, centroid3, radius3, 0.0f, 2.0f * PI, color, aTransform);
 
-    const auto leftUpPoint3    = sf::Vector2f(radius3 * cosf(-3.0f / 4.0f * M_PI) + centroid3.x, radius3 * sinf(-3.0f / 4.0f * M_PI) + centroid3.y);
-    const auto rightDownPoint3 = sf::Vector2f(radius3 * cosf(1.0f / 4.0f * M_PI) + centroid3.x, radius3 * sinf(1.0f / 4.0f * M_PI) + centroid3.y);
+    const auto leftUpPoint3    = sf::Vector2f(radius3 * cosf(-3.0f / 4.0f * PI) + centroid3.x, radius3 * sinf(-3.0f / 4.0f * PI) + centroid3.y);
+    const auto rightDownPoint3 = sf::Vector2f(radius3 * cosf(1.0f / 4.0f * PI) + centroid3.x, radius3 * sinf(1.0f / 4.0f * PI) + centroid3.y);
 
 /* Bind edges of central half-circle and first up-right circle */
 
-    addLine(lines, sf::Vertex(leftUpPoint3,    color), sf::Vertex(upPoint1,    color));
-    addLine(lines, sf::Vertex(rightDownPoint3, color), sf::Vertex(rightPoint1, color));
+    addLine(lines, aTransform * leftUpPoint3,    aTransform * upPoint1,    color);
+    addLine(lines, aTransform * rightDownPoint3, aTransform * rightPoint1, color);
 
 /* Create first down-right circle */
 
     const auto centroid4 = mCenterOfGrid + sf::Vector2f(aParameters[3] * mUnit, aParameters[3] * mUnit);
     const auto radius4 = 1.5f * mUnit;
 
-    addArc(lines, centroid4, radius4, 0.0f, 2.0f * PI, color);
+    addArc(lines, centroid4, radius4, 0.0f, 2.0f * PI, color, aTransform);
 
-    const auto rightUpPoint4  = sf::Vector2f(radius4 * cosf(-1.0f / 4.0f * M_PI) + centroid4.x, radius4 * sinf(-1.0f / 4.0f * M_PI) + centroid4.y);
-    const auto leftDownPoint4 = sf::Vector2f(radius4 * cosf(3.0f / 4.0f * M_PI) + centroid4.x, radius4 * sinf(3.0f / 4.0f * M_PI) + centroid4.y);
+    const auto rightUpPoint4  = sf::Vector2f(radius4 * cosf(-1.0f / 4.0f * PI) + centroid4.x, radius4 * sinf(-1.0f / 4.0f * PI) + centroid4.y);
+    const auto leftDownPoint4 = sf::Vector2f(radius4 * cosf(3.0f / 4.0f * PI) + centroid4.x, radius4 * sinf(3.0f / 4.0f * PI) + centroid4.y);
 
 /* Bind edges of central half-circle and first down-right circle */
 
-    addLine(lines, sf::Vertex(leftDownPoint4, color), sf::Vertex(downPoint1,  color));
-    addLine(lines, sf::Vertex(rightUpPoint4,  color), sf::Vertex(rightPoint1, color));
+    addLine(lines, aTransform * leftDownPoint4, aTransform * downPoint1,  color);
+    addLine(lines, aTransform * rightUpPoint4,  aTransform * rightPoint1, color);
 
 /* Create second up-right circle */
 
     const auto centroid5 = mCenterOfGrid + sf::Vector2f((aParameters[3] + aParameters[4]) * mUnit, -(aParameters[3] + aParameters[4]) * mUnit);
     const auto radius5 = 2.0f * mUnit;
 
-    addArc(lines, centroid5, radius5, 0.0f, 2.0f * PI, color);
+    addArc(lines, centroid5, radius5, 0.0f, 2.0f * PI, color, aTransform);
 
-    const auto leftUpPoint5    = sf::Vector2f(radius5 * cosf(-3.0f / 4.0f * M_PI) + centroid5.x, radius5 * sinf(-3.0f / 4.0f * M_PI) + centroid5.y);
-    const auto rightDownPoint5 = sf::Vector2f(radius5 * cosf(1.0f / 4.0f * M_PI) + centroid5.x, radius5 * sinf(1.0f / 4.0f * M_PI) + centroid5.y);
+    const auto leftUpPoint5    = sf::Vector2f(radius5 * cosf(-3.0f / 4.0f * PI) + centroid5.x, radius5 * sinf(-3.0f / 4.0f * PI) + centroid5.y);
+    const auto rightDownPoint5 = sf::Vector2f(radius5 * cosf(1.0f / 4.0f * PI) + centroid5.x, radius5 * sinf(1.0f / 4.0f * PI) + centroid5.y);
 
 /* Bind edges of first up-right circle and second up-right circle */
 
-    addLine(lines, sf::Vertex(leftUpPoint5,    color), sf::Vertex(leftUpPoint3,    color));
-    addLine(lines, sf::Vertex(rightDownPoint5, color), sf::Vertex(rightDownPoint3, color));
+    addLine(lines, aTransform * leftUpPoint5,    aTransform * leftUpPoint3,    color);
+    addLine(lines, aTransform * rightDownPoint5, aTransform * rightDownPoint3, color);
 
 /* Create second down-right circle */
 
     const auto centroid6 = mCenterOfGrid + sf::Vector2f((aParameters[3] + aParameters[4]) * mUnit, (aParameters[3] + aParameters[4]) * mUnit);
     const auto radius6 = 2.0f * mUnit;
 
-    addArc(lines, centroid6, radius6, 0.0f, 2.0f * PI, color);
+    addArc(lines, centroid6, radius6, 0.0f, 2.0f * PI, color, aTransform);
 
-    const auto rightUpPoint6  = sf::Vector2f(radius6 * cosf(-1.0f / 4.0f * M_PI) + centroid6.x, radius6 * sinf(-1.0f / 4.0f * M_PI) + centroid6.y);
-    const auto leftDownPoint6 = sf::Vector2f(radius6 * cosf(3.0f / 4.0f * M_PI) + centroid6.x, radius6 * sinf(3.0f / 4.0f * M_PI) + centroid6.y);
+    const auto rightUpPoint6  = sf::Vector2f(radius6 * cosf(-1.0f / 4.0f * PI) + centroid6.x, radius6 * sinf(-1.0f / 4.0f * PI) + centroid6.y);
+    const auto leftDownPoint6 = sf::Vector2f(radius6 * cosf(3.0f / 4.0f * PI) + centroid6.x, radius6 * sinf(3.0f / 4.0f * PI) + centroid6.y);
 
 /* Bind edges of first down-right circle and second down-right circle */
 
-    addLine(lines, sf::Vertex(leftDownPoint6, color), sf::Vertex(leftDownPoint4, color));
-    addLine(lines, sf::Vertex(rightUpPoint6,  color), sf::Vertex(rightUpPoint4,  color));
+    addLine(lines, aTransform * leftDownPoint6, aTransform * leftDownPoint4, color);
+    addLine(lines, aTransform * rightUpPoint6,  aTransform * rightUpPoint4,  color);
 
     mRenderWindow.draw(lines);
 }
 
-void CoordinateSystem::addArc(sf::VertexArray& aVertexArray, const sf::Vector2f& aCenter, float aR, float aFromAngle, float aToAngle, const sf::Color& aColor) const
+void CoordinateSystem::addArc(sf::VertexArray& aVertexArray, const sf::Vector2f& aCenter, float aR, float aFromAngle, float aToAngle, const sf::Color& aColor, const sf::Transform& aTransform) const
 {
     const auto phi = (aToAngle - aFromAngle) / (mPointsNum - 1);
 
     for (int i = 0; i < mPointsNum - 1; ++i)
     {
         const auto curPhi = i * phi + aFromAngle;
-        const auto from = sf::Vertex(sf::Vector2f(aR * cosf(curPhi + 0.0f) + aCenter.x, aR * sinf(curPhi + 0.0f) + aCenter.y), aColor);
-        const auto to   = sf::Vertex(sf::Vector2f(aR * cosf(curPhi + phi ) + aCenter.x, aR * sinf(curPhi + phi ) + aCenter.y), aColor);
-        addLine(aVertexArray, from, to);
+        const auto from = sf::Vector2f(aR * cosf(curPhi + 0.0f) + aCenter.x, aR * sinf(curPhi + 0.0f) + aCenter.y);
+        const auto to   = sf::Vector2f(aR * cosf(curPhi + phi ) + aCenter.x, aR * sinf(curPhi + phi ) + aCenter.y);
+        addLine(aVertexArray, aTransform * from, aTransform * to, aColor);
     }
 }
 
-void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vertex &aFrom, const sf::Vertex &aTo)
+void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor)
 {
-    aVertexArray.append(aFrom);
-    aVertexArray.append(aTo);
+    aVertexArray.append(sf::Vertex(aFrom, aColor));
+    aVertexArray.append(sf::Vertex(aTo,   aColor));
 }
-

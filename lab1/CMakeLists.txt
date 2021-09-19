@@ -23,6 +23,6 @@ foreach(FONT ${FONTS_LIST})
     configure_file(${FONT_FILE} ${FONT_FILE} COPYONLY)
 endforeach()
 
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} src/CustomPanel.cpp src/CustomPanel.h)
 
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system tgui)

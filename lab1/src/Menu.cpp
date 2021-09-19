@@ -1,48 +1,30 @@
 #include "Menu.h"
 
-Menu::Menu(sf::RenderWindow& aRenderWindow, unsigned int aWidth, unsigned int aHeight, float aMargin)
+Menu::Menu(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aPosition, const sf::Vector2i& aSize, float aMargin)
     : mGui(aRenderWindow)
-    , mWidth(aWidth)
-    , mHeight(aHeight)
-    , mMargin(aMargin)
-    , mCurHeightPointer(0.0f)
+    , mPosition(aPosition)
+    , mSize(aSize)
 {
 }
 
-void Menu::addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal, float aStep)
+void Menu::addTabs(const std::vector<CustomPanel::Ptr>& aPanels)
 {
-    *aChangeableValue = aMinVal + (aMaxVal - aMinVal)/2.0f;
+    const auto tabContainer = tgui::TabContainer::create();
+    tabContainer->setPosition(mPosition.x,mPosition.y);
+    tabContainer->setSize(mSize.x, mSize.y);
 
-    tgui::Slider::Ptr slider = tgui::Slider::create(aMinVal, aMaxVal);
-    slider->setPosition(mMargin, mMargin + mCurHeightPointer);
-    slider->setSize(static_cast<float>(mWidth) - mMargin * 2.0f, mMargin);
-    slider->setValue(*aChangeableValue);
-    slider->setStep(aStep);
-    slider->setChangeValueOnScroll(true);
-    mGui.add(slider);
+    for (const auto& panel : aPanels)
+    {
+        tabContainer->addPanel(panel, panel->getWidgetName());
+    }
+    tabContainer->select(0);
 
-    tgui::Label::Ptr label = tgui::Label::create(aText + std::to_string(*aChangeableValue));
-    const auto textSize = label->getSize();
-    label->setPosition(tgui::Vector2f(mWidth/2.0f - textSize.x/2.0f, mMargin * 3.0f + mCurHeightPointer));
-    mGui.add(label);
-
-    mCurHeightPointer += mMargin * 6.0f;
-
-    mSliders.push_back({slider, label, aText, aChangeableValue});
+    mGui.add(tabContainer, "TabContainer");
 }
 
 void Menu::handleEvent(sf::Event aEvent)
 {
     mGui.handleEvent(aEvent);
-
-    for (const auto& sliderInfo : mSliders)
-    {
-        if (sliderInfo.mSlider->isFocused())
-        {
-            *sliderInfo.mChangeableValue = sliderInfo.mSlider->getValue();
-            sliderInfo.mLabel->setText(sliderInfo.mText + std::to_string(*sliderInfo.mChangeableValue));
-        }
-    }
 }
 
 void Menu::draw()

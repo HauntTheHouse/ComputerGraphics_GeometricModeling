@@ -1,35 +1,25 @@
 #ifndef LAB1_MENU
 #define LAB1_MENU
 
+#include "CustomPanel.h"
+
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
 class Menu
 {
 public:
-    Menu(sf::RenderWindow& aRenderWindow, unsigned int aWidth, unsigned int aHeight, float aMargin = 10.0f);
+    Menu(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aPosition, const sf::Vector2i& aSize, float aMargin = 10.0f);
 
-    void addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal, float aStep);
+    void addTabs(const std::vector<CustomPanel::Ptr>& aPanels);
     void handleEvent(sf::Event aEvent);
     void draw();
 
 private:
     tgui::Gui mGui;
 
-    unsigned int mWidth;
-    unsigned int mHeight;
-
-    float mCurHeightPointer;
-    float mMargin;
-
-    struct SliderInfo
-    {
-        tgui::Slider::Ptr mSlider;
-        tgui::Label::Ptr mLabel;
-        std::string mText;
-        float* mChangeableValue;
-    };
-    std::vector<SliderInfo> mSliders;
+    sf::Vector2i mSize;
+    sf::Vector2i mPosition;
 };
 
 #endif //LAB1_MENU
