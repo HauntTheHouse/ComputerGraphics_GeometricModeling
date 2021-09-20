@@ -3,14 +3,14 @@
 CustomPanel::CustomPanel(const std::string& aName, const sf::Vector2i& aPosition, const sf::Vector2i& aSize, float aMargin)
         : tgui::Panel()
         , mMargin(aMargin)
-        , mCurHeightPointer(0.0f)
+        , mCurHeightPointer(10.0f)
 {
     setWidgetName(aName);
     setPosition(aPosition.x, aPosition.y);
     setSize(aSize.x, aSize.y);
 }
 
-CustomPanel::Ptr CustomPanel::create(const std::string &aName, sf::Vector2i &aPosition, const sf::Vector2i &aSize, float aMargin)
+CustomPanel::Ptr CustomPanel::create(const std::string &aName, const sf::Vector2i &aPosition, const sf::Vector2i &aSize, float aMargin)
 {
     return std::make_shared<CustomPanel>(aName, aPosition, aSize, aMargin);
 }
@@ -37,6 +37,18 @@ void CustomPanel::addSlider(const std::string &aText, float *aChangeableValue, f
     mSliders.push_back({slider, label, aText, aChangeableValue});
 }
 
+void CustomPanel::addCheckbox(const std::string &aText, bool* aIsChecked)
+{
+    const auto checkbox = tgui::CheckBox::create(aText);
+    checkbox->setPosition(getPosition().x + getSize().x / 2.0f - checkbox->getFullSize().x / 2.0f,
+                          getPosition().y + mMargin + mCurHeightPointer);
+    add(checkbox);
+
+    mCurHeightPointer += mMargin * 4.0f;
+
+    mCheckBoxes.push_back({checkbox, aText, aIsChecked});
+}
+
 void CustomPanel::updateChangeableValues()
 {
     for (const auto& sliderInfo : mSliders)
@@ -45,6 +57,13 @@ void CustomPanel::updateChangeableValues()
         {
             *sliderInfo.mChangeableValue = sliderInfo.mSlider->getValue();
             sliderInfo.mLabel->setText(sliderInfo.mText + std::to_string(*sliderInfo.mChangeableValue));
+        }
+    }
+    for (const auto& checkboxInfo : mCheckBoxes)
+    {
+        if (checkboxInfo.mCheckBox->isMouseDown())
+        {
+            *checkboxInfo.mIsChecked = checkboxInfo.mCheckBox->isChecked();
         }
     }
 }
