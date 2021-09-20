@@ -110,8 +110,8 @@ int main()
             0.0f, 0.0f, 1.0f
         );
 
-        const auto reflectionX = hasSymmetryX ? -1.0f : 1.0f;
-        const auto reflectionY = hasSymmetryY ? -1.0f : 1.0f;
+        const auto reflectionX = hasSymmetryX ? 1.0f : -1.0f;
+        const auto reflectionY = hasSymmetryY ? 1.0f : -1.0f;
         sf::Transform reflection(
             reflectionY, 0.0f, 0.0f,
             0.0f, reflectionX, 0.0f,
