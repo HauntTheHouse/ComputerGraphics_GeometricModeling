@@ -3,28 +3,22 @@
 #include "Menu.h"
 #include "CoordinateSystem.h"
 #include <cmath>
-
+#include <iostream>
 int main()
 {
-    const auto WINDOW_WIDTH = 800;
-    const auto WINDOW_HEIGHT = 600;
+    const auto WINDOW_SIZE = sf::Vector2i(800, 800);
+    const auto MENU_SIZE = sf::Vector2i(200, WINDOW_SIZE.y);
+    const auto GRID_SIZE = sf::Vector2i(WINDOW_SIZE.x - MENU_SIZE.x, WINDOW_SIZE.y);
 
-    const auto MENU_WIDTH = 200;
-    const auto MENU_HEIGHT = 600;
+    const auto GRID_CENTER = sf::Vector2i(MENU_SIZE.x + GRID_SIZE.x/2.0f, GRID_SIZE.y/2.0f);
 
-    const auto GRID_WIDTH = WINDOW_WIDTH - MENU_WIDTH;
-    const auto GRID_HEIGHT = WINDOW_HEIGHT;
+    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE.x, WINDOW_SIZE.y), "Lab1", sf::Style::Close);
+    auto view = sf::View(sf::FloatRect(-GRID_CENTER.x, -GRID_CENTER.y, WINDOW_SIZE.x, WINDOW_SIZE.y));
+    window.setView(view);
 
-    const auto GRID_CENTER = sf::Vector2f(MENU_WIDTH + GRID_WIDTH/2.0f, GRID_HEIGHT/2.0f);
+    Menu menu(window, {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Lab1", sf::Style::Close);
-
-    const auto pos  = sf::Vector2i(0, 0);
-    const auto size = sf::Vector2i(MENU_WIDTH, MENU_HEIGHT);
-
-    Menu menu(window, pos, size);
-
-    const auto linearPanel = CustomPanel::create("Linear", pos, size, 12.0f);
+    const auto linearPanel = CustomPanel::create("Linear", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
     float unit;
     linearPanel->addSlider("Unit: ", &unit, 12.0f, 26.0f, 1.0f);
@@ -39,7 +33,7 @@ int main()
     linearPanel->addSlider("Parameter4: ", parameters + 3, 2.0f, 6.0f, 0.5f);
     linearPanel->addSlider("Parameter5: ", parameters + 4, 0.0f, 6.0f, 0.5f);
 
-    const auto affinePanel = CustomPanel::create("Affine", pos, size, 10.0f);
+    const auto affinePanel = CustomPanel::create("Affine", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
     float translateX, translateY;
     affinePanel->addSlider("TranslateX: ", &translateX, -10.0f, 10.0f, 0.5f);
@@ -56,12 +50,22 @@ int main()
     affinePanel->addCheckbox("SymmetryX", &hasSymmetryX);
     affinePanel->addCheckbox("SymmetryY", &hasSymmetryY);
 
-    const auto projectivePanel = CustomPanel::create("Project.", pos, size, 10.0f);
+    sf::Vector2f angleR;
+    affinePanel->addKnob("rx", &angleR.x, 270.0f);
+    affinePanel->addKnob("ry", &angleR.y, 180.0f);
+
+    const auto projectivePanel = CustomPanel::create("Project.", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
+
+    sf::Vector3f w;
+    projectivePanel->addSlider("w0: ", &w.z, 0.0f, 2000.0f, 0.1f);
+    projectivePanel->addSlider("wx: ", &w.x, 0.0f, 2.0f, 0.1f);
+    projectivePanel->addSlider("wy: ", &w.y, 0.0f, 2.0f, 0.1f);
+
 
     std::vector<std::shared_ptr<CustomPanel>> panels{linearPanel, affinePanel, projectivePanel};
     menu.addTabs(panels);
 
-    CoordinateSystem coordinateSystem(window, GRID_CENTER, GRID_WIDTH, GRID_HEIGHT, unit, pointsNum);
+    CoordinateSystem coordinateSystem(window, GRID_SIZE, unit, pointsNum, angleR, w);
 
     while (window.isOpen())
     {
@@ -70,6 +74,8 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::MouseButtonPressed)
+                std::cout << "(" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
             menu.handleEvent(event);
             for (const auto& panel : panels)
                 panel->updateChangeableValues();
@@ -78,18 +84,6 @@ int main()
         window.clear(sf::Color(255, 255, 255, 255));
 
         coordinateSystem.drawGrid(sf::Color(130, 130, 130), sf::Color(240, 240, 240));
-
-        sf::Transform centerTransform(
-            1.0f, 0.0f, GRID_CENTER.x,
-            0.0f, 1.0f, GRID_CENTER.y,
-            0.0f, 0.0f, 1.0f
-        );
-
-        sf::Transform centerTransformInversed(
-                1.0f, 0.0f, -GRID_CENTER.x,
-                0.0f, 1.0f, -GRID_CENTER.y,
-                0.0f, 0.0f, 1.0f
-        );
 
         sf::Transform translate(
             1.0f, 0.0f, unit * translateX,
@@ -110,15 +104,15 @@ int main()
             0.0f, 0.0f, 1.0f
         );
 
-        const auto reflectionX = hasSymmetryX ? 1.0f : -1.0f;
-        const auto reflectionY = hasSymmetryY ? 1.0f : -1.0f;
+        const auto reflectionX = hasSymmetryX ? -1.0f : 1.0f;
+        const auto reflectionY = hasSymmetryY ? -1.0f : 1.0f;
         sf::Transform reflection(
             reflectionY, 0.0f, 0.0f,
             0.0f, reflectionX, 0.0f,
             0.0f, 0.0f, 1.0f
         );
 
-        const auto transform = centerTransform * reflection * translate * rotate * scale * centerTransformInversed;
+        const auto transform = reflection * translate * rotate * scale;
 
         coordinateSystem.drawGrid(sf::Color(0, 0, 0), sf::Color(180, 180, 180), transform);
         coordinateSystem.drawFigure(parameters, transform);

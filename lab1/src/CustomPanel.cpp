@@ -2,7 +2,7 @@
 
 CustomPanel::CustomPanel(const std::string& aName, const sf::Vector2i& aPosition, const sf::Vector2i& aSize, float aMargin)
         : tgui::Panel()
-        , mMargin(aMargin)
+        , mPadding(aMargin)
         , mCurHeightPointer(10.0f)
 {
     setWidgetName(aName);
@@ -20,33 +20,56 @@ void CustomPanel::addSlider(const std::string &aText, float *aChangeableValue, f
     *aChangeableValue = aMinVal + (aMaxVal - aMinVal)/2.0f;
 
     const auto slider = tgui::Slider::create(aMinVal, aMaxVal);
-    slider->setPosition(getPosition().x + mMargin, getPosition().y + mMargin + mCurHeightPointer);
-    slider->setSize(static_cast<float>(getSize().x) - mMargin * 2.0f, mMargin);
+    slider->setPosition(getPosition().x + mPadding, getPosition().y + mPadding + mCurHeightPointer);
+    slider->setSize(static_cast<float>(getSize().x) - mPadding * 2.0f, mPadding);
     slider->setValue(*aChangeableValue);
     slider->setStep(aStep);
     slider->setChangeValueOnScroll(true);
     add(slider);
 
     const auto label = tgui::Label::create(aText + std::to_string(*aChangeableValue));
-    const auto textSize = label->getSize();
-    label->setPosition(tgui::Vector2f(getPosition().x + getSize().x/2.0f - textSize.x/2.0f, getPosition().y + mMargin * 3.0f + mCurHeightPointer));
+    label->setPosition(getPosition().x + getSize().x / 2.0f - label->getSize().x / 2.0f,
+                       getPosition().y + mPadding * 3.0f + mCurHeightPointer);
     add(label);
 
-    mCurHeightPointer += mMargin * 6.0f;
+    mCurHeightPointer += mPadding * 6.0f;
 
     mSliders.push_back({slider, label, aText, aChangeableValue});
 }
 
 void CustomPanel::addCheckbox(const std::string &aText, bool* aIsChecked)
 {
+    *aIsChecked = false;
     const auto checkbox = tgui::CheckBox::create(aText);
     checkbox->setPosition(getPosition().x + getSize().x / 2.0f - checkbox->getFullSize().x / 2.0f,
-                          getPosition().y + mMargin + mCurHeightPointer);
+                          getPosition().y + mPadding + mCurHeightPointer);
     add(checkbox);
 
-    mCurHeightPointer += mMargin * 4.0f;
+    mCurHeightPointer += mPadding * 3.0f;
 
     mCheckBoxes.push_back({checkbox, aText, aIsChecked});
+}
+
+void CustomPanel::addKnob(const std::string &aText, float *aChangeableValue, float aStartValue)
+{
+    *aChangeableValue = aStartValue;
+    const auto knob = tgui::Knob::create();
+    knob->setValue(aStartValue);
+    knob->setSize(getSize().x - 10.0f * mPadding, getSize().x - 10.0f * mPadding);
+    knob->setPosition(getPosition().x + getSize().x / 2.0f - knob->getFullSize().x / 2.0f,
+                      getPosition().y + mPadding + mCurHeightPointer);
+    add(knob);
+
+    mCurHeightPointer += mPadding * 10.0f;
+
+    const auto label = tgui::Label::create(aText);
+    label->setPosition(getPosition().x + getSize().x / 2.0f - label->getSize().x / 2.0f,
+                       getPosition().y + mPadding + mCurHeightPointer);
+    add(label);
+
+    mCurHeightPointer += mPadding * 3.0f;
+
+    mKnobs.push_back({knob, aText, aChangeableValue});
 }
 
 void CustomPanel::updateChangeableValues()
@@ -63,8 +86,17 @@ void CustomPanel::updateChangeableValues()
     {
         if (checkboxInfo.mCheckBox->isMouseDown())
         {
-            *checkboxInfo.mIsChecked = checkboxInfo.mCheckBox->isChecked();
+            *checkboxInfo.mIsChecked = !checkboxInfo.mCheckBox->isChecked();
+        }
+    }
+    for (const auto& knobInfo : mKnobs)
+    {
+        if (knobInfo.mKnob->isMouseDown())
+        {
+            *knobInfo.mChangeableValue = knobInfo.mKnob->getValue();
         }
     }
 }
+
+
 

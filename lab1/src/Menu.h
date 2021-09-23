@@ -9,7 +9,7 @@
 class Menu
 {
 public:
-    Menu(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aPosition, const sf::Vector2i& aSize, float aMargin = 10.0f);
+    Menu(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aPosition, const sf::Vector2i& aSize);
 
     void addTabs(const std::vector<CustomPanel::Ptr>& aPanels);
     void handleEvent(sf::Event aEvent);

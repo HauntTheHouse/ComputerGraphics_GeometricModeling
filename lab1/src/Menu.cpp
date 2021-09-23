@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aPosition, const sf::Vector2i& aSize, float aMargin)
+Menu::Menu(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aPosition, const sf::Vector2i& aSize)
     : mGui(aRenderWindow)
     , mPosition(aPosition)
     , mSize(aSize)
