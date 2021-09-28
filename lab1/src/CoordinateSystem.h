@@ -6,7 +6,7 @@
 class CoordinateSystem
 {
 public:
-    CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit, float& aPointsNum, sf::Vector2f& aAngleR, sf::Vector3f& aW);
+    CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit, float& aPointsNum, sf::Vector2f& aAngleR, bool& aApplyProjective, sf::Vector3f& aW, sf::Vector2f& aR0, sf::Vector2f& aRCoef);
     void drawGrid(const sf::Color& aAxisColor = sf::Color(0, 0, 0, 255), const sf::Color& aGridColor = sf::Color(180, 180, 180, 255), const sf::Transform& aTransform = sf::Transform::Identity);
     void drawFigure(const float* aParameters, const sf::Transform& aTransform = sf::Transform::Identity);
 
@@ -24,7 +24,12 @@ private:
     float& mPointsNum;
 
     sf::Vector2f& mAngleR;
+
+    bool& mApplyProjective;
+
     sf::Vector3f& mW;
+    sf::Vector2f& mR0;
+    sf::Vector2f &mRCoef;
 };
 
 

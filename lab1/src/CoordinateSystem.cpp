@@ -16,13 +16,16 @@ namespace
 
 const float CoordinateSystem::PI = 3.14159265358979323846f;
 
-CoordinateSystem::CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit, float& aPointsNum, sf::Vector2f& aAngleR, sf::Vector3f& aW)
+CoordinateSystem::CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit, float& aPointsNum, sf::Vector2f& aAngleR, bool& aApplyProjective, sf::Vector3f& aW, sf::Vector2f& aR0, sf::Vector2f& aRCoef)
     : mRenderWindow(aRenderWindow)
     , mSize(aSize)
     , mUnit(aUnit)
     , mPointsNum(aPointsNum)
     , mAngleR(aAngleR)
+    , mApplyProjective(aApplyProjective)
     , mW(aW)
+    , mR0(aR0)
+    , mRCoef(aRCoef)
 {
 }
 
@@ -196,20 +199,24 @@ void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f
     const auto radianRx = (mAngleR.x + 90.0f) * PI / 180.0f;
     const auto radianRy = (mAngleR.y - 90.0f) * PI / 180.0f;
 
-    const auto r0 = sf::Vector2f(0.0f, 0.0f);
-    const auto rx = sf::Vector2f(cosf(radianRx), sinf(radianRx));
-    const auto ry = sf::Vector2f(cosf(radianRy), sinf(radianRy));
+    auto r0 = mR0 * mUnit;
+    auto rx = sf::Vector2f(cosf(radianRx), sinf(radianRx));
+    auto ry = sf::Vector2f(cosf(radianRy), sinf(radianRy));
 
-    aVertexArray.append(sf::Vertex(r0 + rx * aFrom.x + ry * aFrom.y, aColor));
-    aVertexArray.append(sf::Vertex(r0 + rx * aTo.x   + ry * aTo.y,   aColor));
+    if (mApplyProjective)
+    {
+        rx *= mRCoef.x;
+        ry *= mRCoef.y;
 
-//    const auto r0 = sf::Vector2f(0, 0);
-//    const auto rx = sf::Vector2f(400, 50);
-//    const auto ry = sf::Vector2f(-30, -300);
-//
-//    auto res = (r0*mW.z + rx*mW.x*aFrom.x + ry*mW.y*aFrom.y) / (mW.z + mW.x*aFrom.x + mW.y*aFrom.y);
-//    aVertexArray.append(sf::Vertex(res, aColor));
-//
-//    res = (r0*mW.z + rx*mW.x*aTo.x + ry*mW.y*aTo.y) / (mW.z + mW.x*aTo.x + mW.y*aTo.y);
-//    aVertexArray.append(sf::Vertex(res, aColor));
+        auto res = (r0 * mW.z + rx * mW.x * aFrom.x + ry * mW.y * aFrom.y) / (mW.z + mW.x * aFrom.x + mW.y * aFrom.y);
+        aVertexArray.append(sf::Vertex(res, aColor));
+
+        res = (r0 * mW.z + rx * mW.x*aTo.x + ry * mW.y*aTo.y) / (mW.z + mW.x * aTo.x + mW.y * aTo.y);
+        aVertexArray.append(sf::Vertex(res, aColor));
+    }
+    else
+    {
+        aVertexArray.append(sf::Vertex(r0 + rx * aFrom.x + ry * aFrom.y, aColor));
+        aVertexArray.append(sf::Vertex(r0 + rx * aTo.x   + ry * aTo.y,   aColor));
+    }
 }

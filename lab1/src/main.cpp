@@ -50,22 +50,32 @@ int main()
     affinePanel->addCheckbox("SymmetryX", &hasSymmetryX);
     affinePanel->addCheckbox("SymmetryY", &hasSymmetryY);
 
+    sf::Vector2f r0;
+    affinePanel->addSlider("r0.x: ", &r0.x, -10.0f, 10.0f, 0.1f);
+    affinePanel->addSlider("r0.y: ",   &r0.y, -10.0f, 10.0f, 0.1f);
+
     sf::Vector2f angleR;
     affinePanel->addKnob("rx", &angleR.x, 270.0f);
     affinePanel->addKnob("ry", &angleR.y, 180.0f);
 
     const auto projectivePanel = CustomPanel::create("Project.", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
+    bool applyProjective;
+    projectivePanel->addCheckbox("Apply projective", &applyProjective);
+
     sf::Vector3f w;
     projectivePanel->addSlider("w0: ", &w.z, 0.0f, 2000.0f, 0.1f);
     projectivePanel->addSlider("wx: ", &w.x, 0.0f, 2.0f, 0.1f);
     projectivePanel->addSlider("wy: ", &w.y, 0.0f, 2.0f, 0.1f);
 
+    sf::Vector2f rCoef;
+    projectivePanel->addSlider("rx coefficient: ", &rCoef.x, -1000.0f, 2000.0f, 0.1f);
+    projectivePanel->addSlider("ry coefficient: ", &rCoef.y, -1000.0f, 2000.0f, 0.1f);
 
     std::vector<std::shared_ptr<CustomPanel>> panels{linearPanel, affinePanel, projectivePanel};
     menu.addTabs(panels);
 
-    CoordinateSystem coordinateSystem(window, GRID_SIZE, unit, pointsNum, angleR, w);
+    CoordinateSystem coordinateSystem(window, GRID_SIZE, unit, pointsNum, angleR, applyProjective, w, r0, rCoef);
 
     while (window.isOpen())
     {
@@ -74,8 +84,6 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            if (event.type == sf::Event::MouseButtonPressed)
-                std::cout << "(" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
             menu.handleEvent(event);
             for (const auto& panel : panels)
                 panel->updateChangeableValues();
