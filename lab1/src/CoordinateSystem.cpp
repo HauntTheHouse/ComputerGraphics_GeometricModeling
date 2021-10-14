@@ -1,18 +1,5 @@
 #include "CoordinateSystem.h"
 #include <cmath>
-#include <iostream>
-
-namespace
-{
-    sf::Vector2f normalize(const sf::Vector2f& vec)
-    {
-        float length = sqrtf((vec.x * vec.x) + (vec.y * vec.y));
-        if (length != 0)
-            return {vec.x / length, vec.y / length};
-        else
-            return vec;
-    }
-}
 
 const float CoordinateSystem::PI = 3.14159265358979323846f;
 

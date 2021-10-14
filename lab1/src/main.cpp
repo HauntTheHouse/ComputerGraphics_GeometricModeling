@@ -1,12 +1,12 @@
 #include <SFML/Graphics.hpp>
-
-#include "Menu.h"
-#include "CoordinateSystem.h"
 #include <cmath>
-#include <iostream>
+
+#include <Menu.h>
+#include "CoordinateSystem.h"
+
 int main()
 {
-    const auto WINDOW_SIZE = sf::Vector2i(800, 800);
+    const auto WINDOW_SIZE = sf::Vector2i(800, 600);
     const auto MENU_SIZE = sf::Vector2i(200, WINDOW_SIZE.y);
     const auto GRID_SIZE = sf::Vector2i(WINDOW_SIZE.x - MENU_SIZE.x, WINDOW_SIZE.y);
 
@@ -54,10 +54,6 @@ int main()
     affinePanel->addSlider("r0.x: ", &r0.x, -10.0f, 10.0f, 0.1f);
     affinePanel->addSlider("r0.y: ",   &r0.y, -10.0f, 10.0f, 0.1f);
 
-    sf::Vector2f angleR;
-    affinePanel->addKnob("rx", &angleR.x, 270.0f);
-    affinePanel->addKnob("ry", &angleR.y, 180.0f);
-
     const auto projectivePanel = CustomPanel::create("Project.", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
     bool applyProjective;
@@ -71,6 +67,10 @@ int main()
     sf::Vector2f rCoef;
     projectivePanel->addSlider("rx coefficient: ", &rCoef.x, -1000.0f, 2000.0f, 0.1f);
     projectivePanel->addSlider("ry coefficient: ", &rCoef.y, -1000.0f, 2000.0f, 0.1f);
+
+    sf::Vector2f angleR;
+    projectivePanel->addKnob("rx", &angleR.x, 270.0f);
+    projectivePanel->addKnob("ry", &angleR.y, 180.0f);
 
     std::vector<std::shared_ptr<CustomPanel>> panels{linearPanel, affinePanel, projectivePanel};
     menu.addTabs(panels);

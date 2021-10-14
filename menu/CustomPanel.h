@@ -1,5 +1,5 @@
-#ifndef LAB1_CUSTOM_PANEL
-#define LAB1_CUSTOM_PANEL
+#ifndef CUSTOM_PANEL
+#define CUSTOM_PANEL
 
 #include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/Slider.hpp>
@@ -51,4 +51,4 @@ private:
     std::vector<KnobInfo> mKnobs;
 };
 
-#endif //LAB1_CUSTOM_PANEL
+#endif //CUSTOM_PANEL

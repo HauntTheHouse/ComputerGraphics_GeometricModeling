@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-project(lab1)
-
-set(SRC_DIR "src/")
+project(lab2)
 
 file(GLOB SRC_LIST CONFIGURE_DEPENDS
-    ${SRC_DIR}*.h
-    ${SRC_DIR}*.cpp
-)
+        *.h
+        *.cpp
+        )
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 

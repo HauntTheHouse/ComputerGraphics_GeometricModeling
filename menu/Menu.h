@@ -1,5 +1,5 @@
-#ifndef LAB1_MENU
-#define LAB1_MENU
+#ifndef MENU
+#define MENU
 
 #include "CustomPanel.h"
 
@@ -22,4 +22,4 @@ private:
     sf::Vector2i mPosition;
 };
 
-#endif //LAB1_MENU
+#endif //MENU
