@@ -1,12 +1,9 @@
-#include "CoordinateSystem.h"
+#include "Figure.h"
+
 #include <cmath>
 
-const float CoordinateSystem::PI = 3.14159265358979323846f;
-
-CoordinateSystem::CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit, float& aPointsNum, sf::Vector2f& aAngleR, bool& aApplyProjective, sf::Vector3f& aW, sf::Vector2f& aR0, sf::Vector2f& aRCoef)
-    : mRenderWindow(aRenderWindow)
-    , mSize(aSize)
-    , mUnit(aUnit)
+Figure::Figure(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit, float& aPointsNum, sf::Vector2f& aAngleR, bool& aApplyProjective, sf::Vector3f& aW, sf::Vector2f& aR0, sf::Vector2f& aRCoef)
+    : CoordinateSystem(aRenderWindow, aSize, aUnit)
     , mPointsNum(aPointsNum)
     , mAngleR(aAngleR)
     , mApplyProjective(aApplyProjective)
@@ -16,57 +13,7 @@ CoordinateSystem::CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Ve
 {
 }
 
-void CoordinateSystem::drawGrid(const sf::Color& aAxisColor, const sf::Color& aGridColor, const sf::Transform& aTransform)
-{
-    sf::VertexArray lines(sf::PrimitiveType::Lines);
-
-/* Add vertical lines */
-    for (float i = mUnit; i < mSize.x/2.0f; i+=mUnit)
-    {
-        addLine(lines,
-                aTransform * sf::Vector2f(i, -mSize.y/2.0f),
-                aTransform * sf::Vector2f(i, mSize.y/2.0f),
-                aGridColor);
-    }
-    for (float i = mUnit; i < mSize.x/2.0f; i+=mUnit)
-    {
-        addLine(lines,
-                aTransform * sf::Vector2f(-i, -mSize.y/2.0f),
-                aTransform * sf::Vector2f(-i, mSize.y/2.0f),
-                aGridColor);
-    }
-
-/* Add horizontal lines */
-    for (float i = mUnit; i < mSize.y/2.0f; i+=mUnit)
-    {
-        addLine(lines,
-                aTransform * sf::Vector2f(-mSize.x / 2.0f, i),
-                aTransform * sf::Vector2f(mSize.x / 2.0f, i),
-                aGridColor);
-    }
-    for (float i = mUnit; i < mSize.y/2.0f; i+=mUnit)
-    {
-        addLine(lines,
-                aTransform * sf::Vector2f(-mSize.x / 2.0f, -i),
-                aTransform * sf::Vector2f(mSize.x / 2.0f, -i),
-                aGridColor);
-    }
-
-/* Add main axis */
-
-    addLine(lines,
-            aTransform * sf::Vector2f(0.0f, -mSize.y/2.0f),
-            aTransform * sf::Vector2f(0.0f, mSize.y/2.0f),
-            aAxisColor);
-    addLine(lines,
-            aTransform * sf::Vector2f(-mSize.x / 2.0f, 0.0f),
-            aTransform * sf::Vector2f(mSize.x / 2.0f, 0.0f),
-            aAxisColor);
-
-    mRenderWindow.draw(lines);
-}
-
-void CoordinateSystem::drawFigure(const float* aParameters, const sf::Transform& aTransform)
+void Figure::drawFigure(const float* aParameters, const sf::Transform& aTransform)
 {
 /* Create central half-circle */
     sf::VertexArray lines(sf::PrimitiveType::Lines);
@@ -168,7 +115,7 @@ void CoordinateSystem::drawFigure(const float* aParameters, const sf::Transform&
     mRenderWindow.draw(lines);
 }
 
-void CoordinateSystem::addArc(sf::VertexArray& aVertexArray, const sf::Vector2f& aCenter, float aR, float aFromAngle, float aToAngle, const sf::Color& aColor, const sf::Transform& aTransform) const
+void Figure::addArc(sf::VertexArray& aVertexArray, const sf::Vector2f& aCenter, float aR, float aFromAngle, float aToAngle, const sf::Color& aColor, const sf::Transform& aTransform) const
 {
     const auto phi = (aToAngle - aFromAngle) / (mPointsNum - 1);
 
@@ -181,7 +128,7 @@ void CoordinateSystem::addArc(sf::VertexArray& aVertexArray, const sf::Vector2f&
     }
 }
 
-void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor) const
+void Figure::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor) const
 {
     const auto radianRx = (mAngleR.x + 90.0f) * PI / 180.0f;
     const auto radianRy = (mAngleR.y - 90.0f) * PI / 180.0f;

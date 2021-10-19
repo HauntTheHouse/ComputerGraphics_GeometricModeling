@@ -2,7 +2,7 @@
 #include <cmath>
 
 #include <Menu.h>
-#include "CoordinateSystem.h"
+#include "Figure.h"
 
 int main()
 {
@@ -18,20 +18,20 @@ int main()
 
     Menu menu(window, {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
-    const auto linearPanel = CustomPanel::create("Linear", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
+    const auto parametersPanel = CustomPanel::create("Param.", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
     float unit;
-    linearPanel->addSlider("Unit: ", &unit, 12.0f, 26.0f, 1.0f);
+    parametersPanel->addSlider("Unit: ", &unit, 12.0f, 26.0f, 1.0f);
 
     float pointsNum;
-    linearPanel->addSlider("PointsNum: ", &pointsNum, 6.0f, 34.0f, 1.0f);
+    parametersPanel->addSlider("PointsNum: ", &pointsNum, 6.0f, 34.0f, 1.0f);
 
     float parameters[5];
-    linearPanel->addSlider("Parameter1: ", parameters + 0, 1.0f, 5.0f, 0.5f);
-    linearPanel->addSlider("Parameter2: ", parameters + 1,-9.0f,-5.0f, 0.5f);
-    linearPanel->addSlider("Parameter3: ", parameters + 2, 0.5f, 2.5f, 0.25f);
-    linearPanel->addSlider("Parameter4: ", parameters + 3, 2.0f, 6.0f, 0.5f);
-    linearPanel->addSlider("Parameter5: ", parameters + 4, 0.0f, 6.0f, 0.5f);
+    parametersPanel->addSlider("Parameter1: ", parameters + 0, 1.0f, 5.0f, 0.5f);
+    parametersPanel->addSlider("Parameter2: ", parameters + 1, -9.0f, -5.0f, 0.5f);
+    parametersPanel->addSlider("Parameter3: ", parameters + 2, 0.5f, 2.5f, 0.25f);
+    parametersPanel->addSlider("Parameter4: ", parameters + 3, 2.0f, 6.0f, 0.5f);
+    parametersPanel->addSlider("Parameter5: ", parameters + 4, 0.0f, 6.0f, 0.5f);
 
     const auto affinePanel = CustomPanel::create("Affine", {0, 0}, {MENU_SIZE.x, MENU_SIZE.y});
 
@@ -72,10 +72,10 @@ int main()
     projectivePanel->addKnob("rx", &angleR.x, 270.0f);
     projectivePanel->addKnob("ry", &angleR.y, 180.0f);
 
-    std::vector<std::shared_ptr<CustomPanel>> panels{linearPanel, affinePanel, projectivePanel};
+    std::vector<std::shared_ptr<CustomPanel>> panels{parametersPanel, affinePanel, projectivePanel};
     menu.addTabs(panels);
 
-    CoordinateSystem coordinateSystem(window, GRID_SIZE, unit, pointsNum, angleR, applyProjective, w, r0, rCoef);
+    Figure figure(window, GRID_SIZE, unit, pointsNum, angleR, applyProjective, w, r0, rCoef);
 
     while (window.isOpen())
     {
@@ -91,7 +91,7 @@ int main()
 
         window.clear(sf::Color(255, 255, 255, 255));
 
-        coordinateSystem.drawGrid(sf::Color(130, 130, 130), sf::Color(240, 240, 240));
+        figure.drawGrid(sf::Color(130, 130, 130), sf::Color(240, 240, 240));
 
         sf::Transform translate(
             1.0f, 0.0f, unit * translateX,
@@ -99,7 +99,7 @@ int main()
             0.0f, 0.0f, 1.0f
         );
 
-        const auto radian = rotateDegree * CoordinateSystem::PI / 180.0f;
+        const auto radian = rotateDegree * Figure::PI / 180.0f;
         sf::Transform rotate(
             cosf(radian), -sinf(radian), 0.0f,
             sinf(radian),  cosf(radian), 0.0f,
@@ -122,8 +122,8 @@ int main()
 
         const auto transform = reflection * translate * rotate * scale;
 
-        coordinateSystem.drawGrid(sf::Color(0, 0, 0), sf::Color(180, 180, 180), transform);
-        coordinateSystem.drawFigure(parameters, transform);
+        figure.drawGrid(sf::Color(0, 0, 0), sf::Color(180, 180, 180), transform);
+        figure.drawFigure(parameters, transform);
 
         menu.draw();
 

@@ -18,6 +18,7 @@ public:
     void addSlider(const std::string& aText, float* aChangeableValue, float aMinVal, float aMaxVal, float aStep);
     void addCheckbox(const std::string& aText, bool* aIsChecked);
     void addKnob(const std::string& aText, float* aChangeableValue, float aStartValue);
+    void addLabel(const std::string& aText, float* aChangeableValue);
 
     void updateChangeableValues();
 
@@ -49,6 +50,14 @@ private:
         float* mChangeableValue;
     };
     std::vector<KnobInfo> mKnobs;
+
+    struct LabelInfo
+    {
+        tgui::Label::Ptr mLabel;
+        std::string mText;
+        float* mChangeableValue;
+    };
+    std::vector<LabelInfo> mLabels;
 };
 
 #endif //CUSTOM_PANEL

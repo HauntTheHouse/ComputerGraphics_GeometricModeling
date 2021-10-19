@@ -72,6 +72,17 @@ void CustomPanel::addKnob(const std::string &aText, float *aChangeableValue, flo
     mKnobs.push_back({knob, aText, aChangeableValue});
 }
 
+void CustomPanel::addLabel(const std::string& aText, float* aChangeableValue)
+{
+    const auto label = tgui::Label::create(aText + std::to_string(*aChangeableValue));
+    label->setPosition(getPosition().x + getSize().x / 2.0f - label->getSize().x / 2.0f,
+                       getPosition().y + mPadding + mCurHeightPointer);
+    add(label);
+    mCurHeightPointer += mPadding * 3.0f;
+
+    mLabels.push_back({label, aText, aChangeableValue});
+}
+
 void CustomPanel::updateChangeableValues()
 {
     for (const auto& sliderInfo : mSliders)
@@ -95,6 +106,10 @@ void CustomPanel::updateChangeableValues()
         {
             *knobInfo.mChangeableValue = knobInfo.mKnob->getValue();
         }
+    }
+    for (const auto& labelInfo : mLabels)
+    {
+        labelInfo.mLabel->setText(labelInfo.mText + std::to_string(*labelInfo.mChangeableValue));
     }
 }
 

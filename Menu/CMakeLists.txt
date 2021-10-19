@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-project(menu)
+project(Menu)
 
 find_package(SFML COMPONENTS system window graphics)
 find_package(TGUI)
