@@ -8,9 +8,6 @@ class PerseusSpiric : public CoordinateSystem
 public:
     PerseusSpiric(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit);
     void drawPerseusSpiric(float* aParameters, const sf::Transform& aTransform = sf::Transform::Identity);
-
-private:
-
 };
 
 
