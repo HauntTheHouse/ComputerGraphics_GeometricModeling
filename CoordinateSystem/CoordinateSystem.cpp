@@ -59,7 +59,7 @@ void CoordinateSystem::drawGrid(const sf::Color& aAxisColor, const sf::Color& aG
     mRenderWindow.draw(lines);
 }
 
-void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor) const
+void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor)
 {
     aVertexArray.append(sf::Vertex(aFrom, aColor));
     aVertexArray.append(sf::Vertex(aTo, aColor));

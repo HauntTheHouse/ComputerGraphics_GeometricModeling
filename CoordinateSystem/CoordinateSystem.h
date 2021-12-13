@@ -12,7 +12,7 @@ public:
     static const float PI;
 
 protected:
-    virtual void addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor) const;
+    static void addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor);
 
     sf::RenderWindow& mRenderWindow;
     sf::Vector2f mSize;
