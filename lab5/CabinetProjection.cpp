@@ -32,4 +32,3 @@ void CabinetProjection::drawCavalierProjection(const std::vector<glm::vec3> &aPo
 
     mRenderWindow.draw(lines);
 }
-
