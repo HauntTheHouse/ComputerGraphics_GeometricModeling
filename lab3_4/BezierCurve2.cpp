@@ -35,3 +35,21 @@ void BezierCurve2::drawBezierCurve2(const std::vector<sf::Vector2f>& aPoints, in
 
     mRenderWindow.draw(lines);
 }
+
+sf::VertexArray BezierCurve2::getVertexArray(const std::vector<sf::Vector2f> &aPoints, int aNumLinesPerCurve)
+{
+    sf::VertexArray lines(sf::PrimitiveType::Lines);
+    float deltaT = 1.0f/static_cast<float>(aNumLinesPerCurve);
+    for (int i = 0; i < aPoints.size(); i += 3)
+    {
+        float t = 0.0f;
+        for (int j = 0; j < aNumLinesPerCurve; ++j)
+        {
+            const auto p1 = (1.0f - t)*(1.0f - t)*aPoints[i+0] + 2.0f*t*(1.0f - t)*aPoints[i+1] + t*t*aPoints[i+2];
+            t += deltaT;
+            const auto p2 = (1.0f - t)*(1.0f - t)*aPoints[i+0] + 2.0f*t*(1.0f - t)*aPoints[i+1] + t*t*aPoints[i+2];
+            addLine(lines, p1, p2, sf::Color::Green);
+        }
+    }
+    return lines;
+}
