@@ -45,8 +45,13 @@ void CoordinateSystem::drawGrid(const sf::Color& aAxisColor, const sf::Color& aG
                 aGridColor);
     }
 
-/* Add main axis */
+    mRenderWindow.draw(lines);
+    drawAxis(aAxisColor, aTransform);
+}
 
+void CoordinateSystem::drawAxis(const sf::Color &aAxisColor, const sf::Transform &aTransform)
+{
+    sf::VertexArray lines(sf::PrimitiveType::Lines);
     addLine(lines,
             aTransform * sf::Vector2f(0.0f, -mSize.y/2.0f),
             aTransform * sf::Vector2f(0.0f, mSize.y/2.0f),
@@ -55,9 +60,9 @@ void CoordinateSystem::drawGrid(const sf::Color& aAxisColor, const sf::Color& aG
             aTransform * sf::Vector2f(-mSize.x / 2.0f, 0.0f),
             aTransform * sf::Vector2f(mSize.x / 2.0f, 0.0f),
             aAxisColor);
-
     mRenderWindow.draw(lines);
 }
+
 
 void CoordinateSystem::addLine(sf::VertexArray &aVertexArray, const sf::Vector2f& aFrom, const sf::Vector2f& aTo, const sf::Color& aColor)
 {

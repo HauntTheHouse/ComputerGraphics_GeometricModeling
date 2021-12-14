@@ -8,6 +8,7 @@ class CoordinateSystem
 public:
     CoordinateSystem(sf::RenderWindow& aRenderWindow, const sf::Vector2i& aSize, float& aUnit);
     void drawGrid(const sf::Color& aAxisColor = sf::Color(0, 0, 0, 255), const sf::Color& aGridColor = sf::Color(180, 180, 180, 255), const sf::Transform& aTransform = sf::Transform::Identity);
+    void drawAxis(const sf::Color& aAxisColor = sf::Color(0, 0, 0, 255), const sf::Transform& aTransform = sf::Transform::Identity);
 
     static const float PI;
 
